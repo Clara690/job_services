@@ -23,6 +23,8 @@ docker network create --scope=swarm --driver=overlay --attachable my_swarm_netwo
 ```text 
 docker stack deploy --with-registry-auth -c mysql.yml mysql
 ```
+### Create secrets 
+printf 'password' | docker secret create mysql_root_password -
 
 ### Quit swarm 
 ```text
