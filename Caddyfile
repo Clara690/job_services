@@ -1,0 +1,16 @@
+# Local testing config — no domain yet, so this listens on plain HTTP,
+# port 80. Once having a real domain, replace ":80" below with the
+# domain itself (e.g. "jobs.yourdomain.com") and Caddy will automatically
+# obtain and renew HTTPS certificates — nothing else in this file changes.
+
+:80 {
+    # anything starting with /api/ goes to the FastAPI service
+    handle /api/* {
+        reverse_proxy api:8001
+    }
+
+    # everything else goes to the frontend's static files
+    handle {
+        reverse_proxy frontend:80
+    }
+}

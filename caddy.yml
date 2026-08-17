@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      # "443:443" — add this once a real domain is setup and switch the
+      # Caddyfile to use it; that's the only other change needed for HTTPS.
+    configs:
+      - source: caddy_config
+        target: /etc/caddy/Caddyfile
+    volumes:
+      - caddy_data:/data       # persists auto-obtained certs across restarts (used once you add a domain)
+      - caddy_config:/config
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.labels.app==true]
+    networks:
+      - my_swarm_network
+
+networks:
+  my_swarm_network:
+    external: true
+
+configs:
+  caddy_config:
+    external: true
+
+volumes:
+  caddy_data:
+  caddy_config:
