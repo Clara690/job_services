@@ -9,14 +9,14 @@ services:
     # written into the image, the compose file, or an environment variable
     # visible via `docker service inspect`.
     command: >
-      sh -c "export MYSQL_PASSWORD=$$(cat /run/secrets/mysql_root_password) &&
+      sh -c "export MYSQL_PASSWORD=$$(cat /run/secrets/mysql_user_password_v2) &&
              uv run uvicorn api.main:app --host 0.0.0.0 --port 8001"
     environment:
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
-      MYSQL_ACCOUNT: root
+      MYSQL_ACCOUNT: user
     secrets:
-      - mysql_root_password
+      - mysql_user_password_v2
     ports:
       # TEMPORARY — published directly so you can test with curl before
       # Caddy exists. Once Caddy is in front of this, remove this and let
@@ -48,5 +48,5 @@ networks:
     external: true
 
 secrets:
-  mysql_root_password:
+  mysql_user_password_v2:
     external: true

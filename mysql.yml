@@ -9,9 +9,12 @@ services:
     environment:
       MYSQL_DATABASE: mydb           # 啟動時自動建立的資料庫
       MYSQL_USER: user              # 建立一個普通用戶
-      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_password          
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_password_v2  # 普通用戶密碼          
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password    # root 用戶密碼
-      MYSQL_ROOT_HOST: '%'                    # 允許 root 從任何 host 連線（overlay network 需要）
+      MYSQL_ROOT_HOST: '%'      
+    secrets:
+      - mysql_user_password_v2
+      - mysql_root_password
     volumes:
       - web_scraper_mysql:/var/lib/mysql        # 將資料庫資料持久化到 volume
     # 以下是 Docker Swarm 模式的設定
@@ -53,3 +56,9 @@ networks:
 volumes:
   web_scraper_mysql:
     external: true                 # 使用事先建立好的 volume（避免 Docker stack 自動建立）
+secrets:
+  mysql_root_password:
+    external: true
+  mysql_user_password_v2:
+    external: true
+ 
