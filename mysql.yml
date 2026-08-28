@@ -9,11 +9,11 @@ services:
     environment:
       MYSQL_DATABASE: mydb           # 啟動時自動建立的資料庫
       MYSQL_USER: user              # 建立一個普通用戶
-      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_password_v2  # 普通用戶密碼          
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_password  # 普通用戶密碼          
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password    # root 用戶密碼
       MYSQL_ROOT_HOST: '%'      
     secrets:
-      - mysql_user_password_v2
+      - mysql_user_password
       - mysql_root_password
     volumes:
       - web_scraper_mysql:/var/lib/mysql        # 將資料庫資料持久化到 volume
@@ -26,7 +26,9 @@ services:
         constraints: [node.role==manager]
         # constraints: [node.labels.mysql==true]
     networks:
-      - my_swarm_network            # 加入定義好的 overlay 網路
+      my_swarm_network:            # 加入定義好的 overlay 網路
+          aliases:
+            - mysql
 
   phpmyadmin:
     image: phpmyadmin:5.1.0  # 使用 phpMyAdmin 介面映像
@@ -59,6 +61,6 @@ volumes:
 secrets:
   mysql_root_password:
     external: true
-  mysql_user_password_v2:
+  mysql_user_password:
     external: true
  

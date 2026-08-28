@@ -19,13 +19,15 @@ docker stack deploy -c portainer.yml por
 ```text
 docker network create --scope=swarm --driver=overlay --attachable my_swarm_network
 ```
-### Deploy MySQL database
-```text 
-docker stack deploy --with-registry-auth -c mysql.yml mysql
-```
 ### Create secrets 
 ```text
 printf 'mypassword' | docker secret create mysql_root_password -
+printf 'mypassword' | docker secret create mysql_user_password -
+```
+
+### Deploy MySQL database
+```text 
+docker stack deploy --with-registry-auth -c mysql.yml mysql
 ```
 
 ### Web UI
