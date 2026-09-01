@@ -92,3 +92,27 @@ through these in order:
    (typically for your instances' network tags) allowing, between swarm
    nodes: TCP/UDP 7946 (gossip), UDP 4789 (VXLAN data), and TCP 2377
    (cluster management, manager nodes only).
+
+5. **`api` up but crash-looping on a DB error?** If `app_api` logs show
+   `Access denied for user 'user'@'%' to database 'data_jobs'`
+   (MySQL error 1044), the database name `mysql.yml` provisions doesn't
+   match the one `api` connects to. `MYSQL_DATABASE` in `mysql.yml` must
+   match the database name the api expects (`data_jobs`) — the official
+   MySQL image only grants `user` privileges on the database name it was
+   given.
+
+   The MySQL init scripts (create DB, create user, grant privileges) only
+   run the *first* time a container starts against an empty data volume,
+   so changing `MYSQL_DATABASE` and redeploying won't fix an
+   already-initialized database. Either fix it live without losing data:
+   ```text
+   docker exec -it $(docker ps -q -f name=mysql_mysql) mysql -uroot -p
+   ```
+   ```sql
+   CREATE DATABASE IF NOT EXISTS data_jobs;
+   GRANT ALL PRIVILEGES ON data_jobs.* TO 'user'@'%';
+   FLUSH PRIVILEGES;
+   ```
+   then `docker service update --force app_api` — or, if there's no data
+   worth keeping yet, remove the `web_scraper_mysql` volume and redeploy
+   `mysql.yml` so it initializes fresh with the correct database name.

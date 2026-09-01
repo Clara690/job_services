@@ -7,7 +7,7 @@ services:
     ports:
       - 3306:3306  # 對外開放資料庫埠（3306）
     environment:
-      MYSQL_DATABASE: mydb           # 啟動時自動建立的資料庫
+      MYSQL_DATABASE: data_jobs      # 啟動時自動建立的資料庫（須與 api 連線的資料庫名稱一致）
       MYSQL_USER: user              # 建立一個普通用戶
       MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_password  # 普通用戶密碼          
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password    # root 用戶密碼
